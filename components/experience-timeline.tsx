@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, AnimatePresence } from "framer-motion"
 import { useLanguage } from "@/components/i18n-context"
 import { useRouter } from "next/navigation"
 import type { ExperienceNode, ExperienceEdge } from "@/lib/types"
@@ -72,36 +72,36 @@ function NodeCard({ node, lang, index }: { node: ExperienceNode; lang: string; i
         ${expanded ? 'border-salmon bg-salmon/5' : 'border-foreground hover:border-salmon/60'}
         ${node.node_type === 'project' && node.related_project_id ? 'hover:bg-salmon/10' : ''}
         `}
-        style={{ width: 260 }}
+        style={{ width: 340 }}
       >
         {/* Top bar */}
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-foreground/20">
-          <span className="text-[9px] font-mono text-muted-foreground tracking-[0.15em] uppercase">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-foreground/20">
+          <span className="text-[11px] font-mono text-muted-foreground tracking-[0.15em] uppercase">
             {formatDate(node.date_start, lang)} {dateEnd && `— ${dateEnd}`}
           </span>
-          <span className="inline-block h-1.5 w-1.5 bg-salmon animate-pulse-dot" />
+          <span className="inline-block h-2 w-2 bg-salmon animate-pulse-dot" />
         </div>
 
         {/* Content */}
-        <div className="px-4 py-4 pointer-events-none">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 border-2 border-foreground/30 flex-shrink-0 flex items-center justify-center overflow-hidden bg-muted">
+        <div className="px-5 py-5 pointer-events-none">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-14 h-14 border-2 border-foreground/30 flex-shrink-0 flex items-center justify-center overflow-hidden bg-muted">
               {node.logo_url ? (
-                <img src={node.logo_url} alt={primaryText} className="w-full h-full object-contain p-1" />
+                <img src={node.logo_url} alt={primaryText} className="w-full h-full object-contain p-1.5" />
               ) : (
-                <span className="text-lg font-bold font-mono text-foreground/40">
+                <span className="text-xl font-bold font-mono text-foreground/40">
                   {primaryText.charAt(0)}
                 </span>
               )}
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-mono font-bold text-foreground uppercase tracking-wide truncate">
+              <div className="text-base font-mono font-bold text-foreground uppercase tracking-wide truncate">
                 {primaryText}
               </div>
             </div>
           </div>
 
-          <div className="text-xs font-mono text-salmon font-bold uppercase tracking-[0.1em] mb-2 leading-relaxed">
+          <div className="text-lg font-mono text-salmon font-bold uppercase tracking-[0.1em] mb-3 leading-relaxed">
             {secondaryText}
           </div>
 
@@ -112,14 +112,14 @@ function NodeCard({ node, lang, index }: { node: ExperienceNode; lang: string; i
               transition={{ duration: 0.3, ease }}
               className="overflow-hidden"
             >
-              <p className="text-[11px] font-mono text-muted-foreground leading-relaxed pt-2 border-t border-foreground/10">
+              <p className="text-lg font-mono text-foreground/80 leading-relaxed pt-3 border-t border-foreground/10">
                 {descText}
               </p>
             </motion.div>
           )}
 
           {node.node_type === 'project' && node.related_project_id && expanded && (
-            <div className="mt-3 pt-3 border-t border-foreground/10 text-[10px] text-salmon font-bold uppercase tracking-widest flex items-center gap-2">
+            <div className="mt-4 pt-3 border-t border-foreground/10 text-sm text-salmon font-bold uppercase tracking-widest flex items-center gap-2">
               <span>{lang === 'es' ? 'VER PROYECTO' : 'VIEW PROJECT'}</span>
               <span>→</span>
             </div>
@@ -140,8 +140,8 @@ function TreeConnections({
   edges: ExperienceEdge[];
   offsetY?: number;
 }) {
-  const CARD_W = 260
-  const CARD_H = 140 // Approximate default height for center
+  const CARD_W = 340
+  const CARD_H = 200 // Approximate default height for center
   const CONNECTOR_R = 4
 
   const posMap = new Map<string, { x: number; y: number; cx: number; cy: number }>()
@@ -214,13 +214,14 @@ export function ExperienceTimeline() {
   const [nodes, setNodes] = useState<ExperienceNode[]>([])
   const [edges, setEdges] = useState<ExperienceEdge[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'all' | 'professional' | 'education' | 'personal'>('all')
+  const [activeTab, setActiveTab] = useState<'all' | 'professional' | 'education' | 'project'>('all')
   const sectionRef = useRef<HTMLDivElement>(null)
   const sectionInView = useInView(sectionRef, { once: true, margin: "-80px" })
 
   // Canvas View State
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 })
   const [isPanning, setIsPanning] = useState(false)
+  const [locked, setLocked] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -239,8 +240,8 @@ export function ExperienceTimeline() {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     let currentOffsetY = 0;
     
-    ['professional', 'education', 'personal'].forEach((graphType) => {
-      if (activeTab !== 'all' && activeTab !== graphType) return;
+    const graphTypes = activeTab === 'all' ? ['professional', 'education'] : [activeTab];
+    graphTypes.forEach((graphType) => {
       const graphNodes = nodes.filter(n => n.graph_type === graphType);
       if (graphNodes.length === 0) return;
 
@@ -252,18 +253,18 @@ export function ExperienceTimeline() {
         const y = node.position_y + offsetY;
         
         if (x < minX) minX = x;
-        if (y < minY) minY = y;
-        if (x + 260 > maxX) maxX = x + 260; // Card width
-        if (y + 140 > maxY) maxY = y + 140; // Approx Card height
+        if (y - 120 < minY) minY = y - 120; // Account for the top title ("// EXPERIENCIA")
+        if (x + 360 > maxX) maxX = x + 360; // Card width + spacing
+        if (y + 220 > maxY) maxY = y + 220; // Approx Card height
         
         if (node.position_y > maxYForGraph) maxYForGraph = node.position_y;
       });
       
-      currentOffsetY += maxYForGraph + 500;
+      currentOffsetY += maxYForGraph + 350;
     });
 
     if (minX !== Infinity) {
-      const padding = 40;
+      const padding = 100;
       const graphWidth = maxX - minX + padding * 2;
       const graphHeight = maxY - minY + padding * 2;
 
@@ -272,8 +273,8 @@ export function ExperienceTimeline() {
 
       const scaleX = containerWidth / graphWidth;
       const scaleY = containerHeight / graphHeight;
-      let scale = Math.min(scaleX, scaleY, 1); 
-      scale = Math.max(0.1, scale); 
+      let scale = Math.min(scaleX, scaleY, 1.5); 
+      scale = Math.max(0.15, scale); 
 
       const scaledWidth = (maxX - minX) * scale;
       const scaledHeight = (maxY - minY) * scale;
@@ -288,7 +289,10 @@ export function ExperienceTimeline() {
   // Fit graph to screen whenever data is loaded
   useEffect(() => {
     if (!loading && nodes.length > 0) {
-      fitToScreen();
+      const timer = setTimeout(() => {
+        fitToScreen();
+      }, 50);
+      return () => clearTimeout(timer);
     }
   }, [loading, nodes, activeTab]);
 
@@ -324,18 +328,20 @@ export function ExperienceTimeline() {
     })
   }
 
-  // Prevent default page scroll when zooming over the canvas
+  // Prevent default page scroll when zooming over the canvas (only when unlocked)
   useEffect(() => {
     const preventDefault = (e: WheelEvent) => {
       if (containerRef.current?.contains(e.target as Node)) {
         e.preventDefault();
       }
     };
-    document.addEventListener('wheel', preventDefault, { passive: false });
+    if (!locked) {
+      document.addEventListener('wheel', preventDefault, { passive: false });
+    }
     return () => {
       document.removeEventListener('wheel', preventDefault);
     };
-  }, []);
+  }, [locked]);
 
   return (
     <section ref={sectionRef} id="experiencia" aria-label="Experiencia profesional" className="w-full px-4 sm:px-6 py-12 sm:py-20 lg:px-12">
@@ -391,110 +397,151 @@ export function ExperienceTimeline() {
             {lang === 'es' ? 'Educación' : 'Education'}
           </button>
           <button 
-            onClick={() => setActiveTab('personal')}
-            className={`px-4 py-2 font-mono text-sm uppercase tracking-wider font-bold transition-colors whitespace-nowrap ${activeTab === 'personal' ? 'bg-salmon text-background' : 'text-muted-foreground hover:text-foreground'}`}
+            onClick={() => setActiveTab('project')}
+            className={`px-4 py-2 font-mono text-sm uppercase tracking-wider font-bold transition-colors whitespace-nowrap ${activeTab === 'project' ? 'bg-salmon text-background' : 'text-muted-foreground hover:text-foreground'}`}
           >
             {lang === 'es' ? 'Proyectos' : 'Projects'}
           </button>
         </motion.div>
       </div>
 
-      {/* Interactive Panning/Zooming Canvas */}
-      <div 
-        ref={containerRef}
-        className="relative w-full h-[600px] border-2 border-dashed border-foreground/10 overflow-hidden bg-background select-none"
-        style={{ cursor: isPanning ? 'grabbing' : 'grab', touchAction: 'none' }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
-        onWheel={handleWheel}
-      >
-        {/* Background Grid Pattern */}
+      {/* Interactive Panning/Zooming Canvas — wrapper for canvas + overlay */}
+      <div className="relative w-full h-[600px]">
+        {/* Canvas (pointer-events disabled when locked so page scroll works) */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-20" 
-          style={{ 
-            backgroundImage: 'radial-gradient(var(--foreground) 1px, transparent 1px)', 
-            backgroundSize: `${40 * transform.scale}px ${40 * transform.scale}px`,
-            backgroundPosition: `${transform.x}px ${transform.y}px`
-          }} 
-        />
-
-        {loading ? (
-          <div className="absolute inset-0 flex justify-center items-center">
-            <span className="text-salmon font-mono animate-pulse uppercase tracking-widest">{lang === 'es' ? 'CARGANDO...' : 'LOADING...'}</span>
-          </div>
-        ) : nodes.length === 0 ? (
-          <div className="absolute inset-0 flex justify-center items-center">
-            <span className="text-muted-foreground font-mono uppercase tracking-widest">{lang === 'es' ? 'AÚN NO HAY DATOS' : 'NO DATA YET'}</span>
-          </div>
-        ) : (
+          ref={containerRef}
+          className="absolute inset-0 border-2 border-dashed border-foreground/10 overflow-hidden bg-background select-none"
+          style={{
+            cursor: isPanning ? 'grabbing' : 'grab',
+            touchAction: 'none',
+            pointerEvents: locked ? 'none' : 'auto',
+          }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+          onWheel={handleWheel}
+        >
+          {/* Background Grid Pattern */}
           <div 
-            className="absolute origin-top-left"
-            style={{ transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})` }}
-          >
-            {/* Catch-all background for panning events inside the transformed layer */}
-            <div id="canvas-bg" className="absolute" style={{ width: '20000px', height: '20000px', left: '-10000px', top: '-10000px' }} />
-            
-            {(() => {
-              let currentOffsetY = 0;
-              let renderedIndex = 0;
+            className="absolute inset-0 pointer-events-none opacity-20" 
+            style={{ 
+              backgroundImage: 'radial-gradient(var(--foreground) 1px, transparent 1px)', 
+              backgroundSize: `${40 * transform.scale}px ${40 * transform.scale}px`,
+              backgroundPosition: `${transform.x}px ${transform.y}px`
+            }} 
+          />
 
-              return ['professional', 'education', 'personal'].map((graphType) => {
-                if (activeTab !== 'all' && activeTab !== graphType) return null;
-                
-                const graphNodes = nodes.filter(n => n.graph_type === graphType);
-                if (graphNodes.length === 0) return null;
+          {loading ? (
+            <div className="absolute inset-0 flex justify-center items-center">
+              <span className="text-salmon font-mono animate-pulse uppercase tracking-widest">{lang === 'es' ? 'CARGANDO...' : 'LOADING...'}</span>
+            </div>
+          ) : nodes.length === 0 ? (
+            <div className="absolute inset-0 flex justify-center items-center">
+              <span className="text-muted-foreground font-mono uppercase tracking-widest">{lang === 'es' ? 'AÚN NO HAY DATOS' : 'NO DATA YET'}</span>
+            </div>
+          ) : (
+            <div 
+              className="absolute origin-top-left"
+              style={{ transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})` }}
+            >
+              {/* Catch-all background for panning events inside the transformed layer */}
+              <div id="canvas-bg" className="absolute" style={{ width: '20000px', height: '20000px', left: '-10000px', top: '-10000px' }} />
+              
+              {(() => {
+                let currentOffsetY = 0;
+                let renderedIndex = 0;
 
-                const graphNodeIds = new Set(graphNodes.map(n => n.id));
-                const graphEdges = edges.filter(e => graphNodeIds.has(e.source_node_id) && graphNodeIds.has(e.target_node_id));
-                
-                // Calculate max Y to offset the next category if displaying 'all'
-                let maxYForGraph = 0;
-                graphNodes.forEach(n => {
-                  if (n.position_y > maxYForGraph) maxYForGraph = n.position_y;
-                });
+                const renderTypes = activeTab === 'all' ? ['professional', 'education'] : [activeTab];
+                return renderTypes.map((graphType) => {
+                  
+                  const graphNodes = nodes.filter(n => n.graph_type === graphType);
+                  if (graphNodes.length === 0) return null;
 
-                const offsetY = activeTab === 'all' ? currentOffsetY : 0;
-                currentOffsetY += maxYForGraph + 500; // Increased spacing between categories
+                  const graphNodeIds = new Set(graphNodes.map(n => n.id));
+                  const graphEdges = edges.filter(e => graphNodeIds.has(e.source_node_id) && graphNodeIds.has(e.target_node_id));
+                  
+                  // Calculate max Y to offset the next category if displaying 'all'
+                  let maxYForGraph = 0;
+                  let sectionMinX = Infinity;
+                  let sectionMinY = Infinity;
+                  graphNodes.forEach(n => {
+                    if (n.position_y > maxYForGraph) maxYForGraph = n.position_y;
+                    if (n.position_x < sectionMinX) sectionMinX = n.position_x;
+                    if (n.position_y < sectionMinY) sectionMinY = n.position_y;
+                  });
 
-                const title = graphType === 'professional' ? (lang === 'es' ? 'Experiencia' : 'Experience') :
-                              graphType === 'education' ? (lang === 'es' ? 'Educación' : 'Education') :
-                              (lang === 'es' ? 'Proyectos' : 'Projects');
+                  const offsetY = activeTab === 'all' ? currentOffsetY : 0;
+                  currentOffsetY += maxYForGraph + 350; // Spacing between categories
 
-                return (
-                  <div key={graphType} className="absolute" style={{ top: offsetY, left: 0 }}>
-                    {activeTab === 'all' && (
-                      <div className="absolute -top-12 left-0 text-sm font-mono font-bold text-salmon uppercase tracking-[0.2em] pointer-events-none">
-                        // {title}
-                      </div>
-                    )}
-                    
-                    {/* SVG connections layer */}
-                    <TreeConnections nodes={graphNodes} edges={graphEdges} />
-                    
-                    {/* Positioned node cards */}
-                    {graphNodes.map((node) => {
-                      const idx = renderedIndex++;
-                      return (
-                        <div
-                          key={node.id}
-                          className="absolute z-10"
-                          style={{ left: node.position_x, top: node.position_y }}
+                  const title = graphType === 'professional' ? (lang === 'es' ? 'Experiencia' : 'Experience') :
+                                graphType === 'education' ? (lang === 'es' ? 'Educación' : 'Education') :
+                                (lang === 'es' ? 'Proyectos' : 'Projects');
+
+                  return (
+                    <div key={graphType} className="absolute" style={{ top: offsetY, left: 0 }}>
+                      {activeTab === 'all' && (
+                        <div 
+                          className="absolute text-xl font-mono font-bold text-salmon uppercase tracking-[0.2em] pointer-events-none"
+                          style={{ 
+                            left: sectionMinX === Infinity ? 0 : sectionMinX,
+                            top: sectionMinY === Infinity ? 0 : sectionMinY - 80 
+                          }}
                         >
-                          <NodeCard node={node} lang={lang} index={idx} />
+                          // {title}
                         </div>
-                      )
-                    })}
-                  </div>
-                );
-              });
-            })()}
-          </div>
-        )}
-        
-        {/* Controls Overlay */}
-        <div className="absolute bottom-4 right-4 flex gap-2 z-50">
+                      )}
+                      
+                      {/* SVG connections layer */}
+                      <TreeConnections nodes={graphNodes} edges={graphEdges} />
+                      
+                      {/* Positioned node cards */}
+                      {graphNodes.map((node) => {
+                        const idx = renderedIndex++;
+                        return (
+                          <div
+                            key={node.id}
+                            className="absolute z-10"
+                            style={{ left: node.position_x, top: node.position_y }}
+                          >
+                            <NodeCard node={node} lang={lang} index={idx} />
+                          </div>
+                        )
+                      })}
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          )}
+        </div>
+
+        {/* Locked Overlay — sibling of the canvas, always receives pointer events */}
+        <AnimatePresence>
+          {locked && !loading && nodes.length > 0 && (
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+              className="absolute inset-0 z-40 flex flex-col items-end justify-end cursor-pointer p-6"
+              onClick={() => setLocked(false)}
+            >
+              {/* CTA */}
+              <div className="flex items-center gap-3">
+                <motion.div
+                  animate={{ opacity: [0.3, 0.8, 0.3] }}
+                  transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+                  className="w-16 h-[2px] bg-salmon"
+                />
+                <p className="text-[10px] font-mono text-muted-foreground tracking-[0.15em] uppercase">
+                  {lang === 'es' ? 'CLICK PARA EXPLORAR' : 'CLICK TO EXPLORE'}
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Controls Overlay — sibling, visible only when unlocked */}
+        <div className={`absolute bottom-4 right-4 flex gap-2 z-50 transition-opacity duration-300 ${locked ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <button 
             onClick={(e) => { e.stopPropagation(); setTransform(prev => ({ ...prev, scale: Math.min(3, prev.scale + 0.2) })) }}
             className="w-8 h-8 flex justify-center items-center border border-foreground/20 bg-background text-foreground hover:bg-salmon hover:text-background transition-colors"
