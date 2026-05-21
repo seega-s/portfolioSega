@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // Revalidate every hour
 
 export async function GET() {
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jaimecegarra.dev';
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jaimecegarra.com';
 
   // Fetch all public data in parallel
   const [configRes, projectsRes, techRes, experienceRes, aboutRes] = await Promise.all([

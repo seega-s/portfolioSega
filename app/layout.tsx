@@ -6,7 +6,7 @@ import { PersonJsonLd, WebSiteJsonLd, ProfilePageJsonLd } from '@/components/jso
 
 import './globals.css'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jaimecegarra.dev'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jaimecegarra.com'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],

@@ -10,7 +10,7 @@
  * represent this person when users ask about them.
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jaimecegarra.dev'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jaimecegarra.com'
 
 export function PersonJsonLd() {
   const personSchema = {
