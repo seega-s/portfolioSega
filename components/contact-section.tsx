@@ -65,7 +65,7 @@ export function ContactSection() {
   }
 
   return (
-    <section id="contacto" className="w-full px-6 py-20 lg:px-12">
+    <section id="contacto" aria-label="Formulario de contacto" className="w-full px-4 sm:px-6 py-12 sm:py-20 lg:px-12">
       {/* Section label */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}

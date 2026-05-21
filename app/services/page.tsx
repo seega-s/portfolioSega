@@ -45,7 +45,7 @@ export default function ServicesPage() {
             <Clock size={48} strokeWidth={1} className="text-salmon" />
           </motion.div>
 
-          <h1 className="text-3xl lg:text-5xl font-pixel tracking-tight uppercase mb-4">
+          <h1 className="text-3xl lg:text-5xl font-pixel tracking-tight uppercase mb-4 ascii-dots">
             {t("services.title")}
           </h1>
           <span className="inline-block px-4 py-1.5 mb-6 border-2 border-salmon text-[11px] font-mono tracking-[0.2em] uppercase text-salmon font-bold animate-blink">

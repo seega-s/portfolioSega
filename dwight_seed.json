@@ -1,0 +1,82 @@
+{
+  "main_config": {
+    "site_name": "Dwight K. Schrute",
+    "favicon_url": "https://upload.wikimedia.org/wikipedia/en/e/e5/Dwight_Schrute.jpg",
+    "titles": [
+      "Assistant (to the) Regional Manager",
+      "Beet Farmer",
+      "Bed and Breakfast Owner",
+      "Sales Top Performer"
+    ],
+    "subtitle_es": "Firme creyente en la superioridad de la remolacha y la lealtad incuestionable a Dunder Mifflin. Determinado, calculador y preparado para sobrevivir a cualquier apocalipsis.",
+    "subtitle_en": "Firm believer in beet superiority and unquestionable loyalty to Dunder Mifflin. Determined, calculating, and prepared to survive any apocalypse.",
+    "email": "dwight.schrute@dundermifflin.com",
+    "linkedin": "https://linkedin.com/in/dwightkschrute",
+    "github": ""
+  },
+  "about_config": {
+    "bio_es": "Soy Dwight Kurt Schrute III. Cuando mis ancestros llegaron a América, descubrieron la remolacha, que es, científica y objetivamente, el vegetal más poderoso del planeta. He estado trabajando en ventas toda mi vida, incluso antes de saber qué eran las ventas. Como Asistente (del) Gerente Regional en Dunder Mifflin Scranton, aseguro la supervivencia y el crecimiento de la sucursal. Experto en artes marciales, supervivencia táctica y agricultura.",
+    "bio_en": "I am Dwight Kurt Schrute III. When my ancestors arrived in America, they discovered the beet, which is, scientifically and objectively, the most powerful vegetable on the planet. I have been working in sales my whole life, even before I knew what sales were. As Assistant (to the) Regional Manager at Dunder Mifflin Scranton, I ensure the survival and growth of the branch. Expert in martial arts, tactical survival, and agriculture.",
+    "avatar_url": "https://upload.wikimedia.org/wikipedia/en/e/e5/Dwight_Schrute.jpg"
+  },
+  "projects": [
+    {
+      "id": "schrute-farms",
+      "name_es": "Schrute Farms B&B",
+      "name_en": "Schrute Farms B&B",
+      "desc_es": "El refugio agroturístico número uno en Trip Advisor en Pensilvania.",
+      "desc_en": "The number one agritourism bed and breakfast on Trip Advisor in Pennsylvania.",
+      "techs": ["Hospitality", "Beet Cultivation", "Table Making", "Manure Handling"],
+      "is_private": false,
+      "category": "business",
+      "features_es": ["Habitaciones temáticas de Irrigación", "Demostraciones de fabricación de mesas", "Lecturas de Harry Potter a medianoche"],
+      "features_en": ["Irrigation themed rooms", "Table making demonstrations", "Midnight Harry Potter readings"],
+      "display_order": 1
+    },
+    {
+      "id": "dunder-mifflin-security",
+      "name_es": "Sistema de Seguridad Dunder Mifflin",
+      "name_en": "Dunder Mifflin Security System",
+      "desc_es": "Auditoría integral y reestructuración de la seguridad de la oficina (Simulación de incendio incl.).",
+      "desc_en": "Comprehensive audit and restructuring of office security (Fire drill included).",
+      "techs": ["Tactical Gear", "Fire Alarms", "Blowtorch", "Bear Mace"],
+      "is_private": true,
+      "category": "security",
+      "features_es": ["Bloqueo total de puertas", "Pruebas de estrés para empleados", "Evacuación de emergencia rápida"],
+      "features_en": ["Total door lockdown", "Employee stress testing", "Rapid emergency evacuation"],
+      "display_order": 2
+    }
+  ],
+  "experience_nodes": [
+    {
+      "node_type": "work",
+      "graph_type": "professional",
+      "company_name": "Dunder Mifflin",
+      "role_es": "Asistente del Gerente Regional",
+      "role_en": "Assistant to the Regional Manager",
+      "date_start": "1998",
+      "date_end": "Presente",
+      "description_es": "Cerré las ventas más grandes de la empresa. Gestioné disciplina, insubordinación y seguridad de oficina bajo el mandato de Michael Scott.",
+      "description_en": "Closed the company's largest sales. Managed discipline, insubordination, and office security under Michael Scott.",
+      "techs": ["Sales", "Management", "Investigative skills"],
+      "position_x": 0,
+      "position_y": 0,
+      "display_order": 0
+    },
+    {
+      "node_type": "work",
+      "graph_type": "professional",
+      "company_name": "Schrute Farms",
+      "role_es": "Propietario y Agricultor",
+      "role_en": "Owner & Farmer",
+      "date_start": "Nacimiento",
+      "date_end": "Presente",
+      "description_es": "Gestión de más de 60 acres de cultivo de remolachas. Administración de personal (Mose).",
+      "description_en": "Management of over 60 acres of beet farming. Staff administration (Mose).",
+      "techs": ["Agriculture", "Agritourism", "Leadership"],
+      "position_x": 100,
+      "position_y": -100,
+      "display_order": 1
+    }
+  ]
+}

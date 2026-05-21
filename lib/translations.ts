@@ -37,6 +37,11 @@ export const translations: Record<Lang, Record<string, string>> = {
     'about.philosophy': 'FILOSOFÍA',
     'about.philosophy.text': '"No desarrollo código. Diseño sistemas, invento artefactos, creo soluciones."',
 
+    // Experience
+    'experience.label': '// SECCIÓN: EXPERIENCIA',
+    'experience.title.1': 'Mi trayectoria',
+    'experience.title.2': 'profesional',
+
     // Tech Stack
     'tech.label': '// SECCIÓN: TECH_STACK',
     'tech.title': 'Tecnologías',
@@ -146,6 +151,11 @@ export const translations: Record<Lang, Record<string, string>> = {
     'about.experience.desc': 'Built a virtual machine orchestrator using Azure queues. Full end-to-end design and implementation from scratch.',
     'about.philosophy': 'PHILOSOPHY',
     'about.philosophy.text': '"I don\'t write code. I design systems, invent artifacts, create solutions."',
+
+    // Experience
+    'experience.label': '// SECTION: EXPERIENCE',
+    'experience.title.1': 'My professional',
+    'experience.title.2': 'journey',
 
     // Tech Stack
     'tech.label': '// SECTION: TECH_STACK',

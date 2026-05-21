@@ -16,7 +16,7 @@ export function Footer() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6, ease }}
-      className="w-full border-t-2 border-foreground px-6 py-8 lg:px-12"
+      className="w-full border-t-2 border-foreground px-4 sm:px-6 py-6 sm:py-8 lg:px-12"
     >
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         {/* Left: Logo + Copyright */}
@@ -42,6 +42,7 @@ export function Footer() {
             { label: t("nav.projects"), href: "/projects" },
             { label: t("nav.services"), href: "/services" },
             { label: t("nav.contact"), href: "/#contacto" },
+            { label: "ADMIN", href: "/admin" },
           ].map((link, i) => (
             <motion.div
               key={link.label}

@@ -13,8 +13,10 @@ const I18nContext = createContext<I18nContextType | null>(null)
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('es')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const saved = localStorage.getItem('SEGA-lang') as Lang | null
     if (saved && (saved === 'es' || saved === 'en')) {
       setLangState(saved)
@@ -28,6 +30,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const t = (key: string): string => {
     return translations[lang][key] || key
+  }
+
+  // To prevent hydration mismatch, we don't render the children until mounted
+  if (!mounted) {
+    return null
   }
 
   return (

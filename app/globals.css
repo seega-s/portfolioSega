@@ -81,9 +81,13 @@
 .text-salmon { color: #f07635; }
 .bg-salmon { background-color: #f07635; }
 .border-salmon { border-color: #f07635; }
+.stroke-salmon { stroke: #f07635; }
+.fill-salmon { fill: #f07635; }
 .text-teal { color: #00A59B; }
 .bg-teal { background-color: #00A59B; }
 .border-teal { border-color: #00A59B; }
+.fill-background { fill: hsl(var(--background)); }
+.stroke-foreground { stroke: hsl(var(--foreground)); }
 
 /* ═══════════════════════════════════════════
    GLITCH KEYFRAMES
@@ -183,6 +187,18 @@
 }
 .animate-pulse-dot {
   animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   ASCII DOTS EFFECT
+   ═══════════════════════════════════════════ */
+.ascii-dots {
+  mask-image: radial-gradient(circle, black 50%, transparent 50%);
+  mask-size: 4.8px 4.8px;
+  -webkit-mask-image: radial-gradient(circle, black 50%, transparent 50%);
+  -webkit-mask-size: 4.8px 4.8px;
+  overflow: visible;
+  padding: 4px;
 }
 
 /* ═══════════════════════════════════════════
@@ -368,3 +384,40 @@ html, body {
     overflow-wrap: break-word;
   }
 }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE SCALE — Desktop zoom only
+   ═══════════════════════════════════════════ */
+.responsive-scale {
+  zoom: 1;
+}
+
+@media (min-width: 1024px) {
+  .responsive-scale {
+    zoom: 1.15;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE LAYOUT FIXES
+   ═══════════════════════════════════════════ */
+
+/* Footer responsive padding */
+@media (max-width: 640px) {
+  footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Custom scrollbar for horizontal areas */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #f07635;
+}
+

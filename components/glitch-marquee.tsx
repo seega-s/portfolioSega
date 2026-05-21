@@ -1,11 +1,12 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { useLanguage } from "@/components/i18n-context"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-const TECHS = [
+const FALLBACK_TECHS = [
   "JAVA",
   "SPRING BOOT",
   "REACT",
@@ -35,9 +36,24 @@ function LogoBlock({ name, glitch }: { name: string; glitch: boolean }) {
 export function GlitchMarquee() {
   const { t } = useLanguage()
   const glitchIndices = [2, 7]
+  const [techs, setTechs] = useState<string[]>(FALLBACK_TECHS)
+
+  useEffect(() => {
+    fetch('/api/admin/stack/lists')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const allTechs = data.flatMap(list => list.stack_techs?.map((t: any) => t.name) || [])
+          if (allTechs.length > 0) {
+            setTechs(allTechs)
+          }
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   return (
-    <section className="w-full py-16 px-6 lg:px-12">
+    <section className="w-full py-10 sm:py-16 px-4 sm:px-6 lg:px-12">
       {/* Section label */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -60,11 +76,11 @@ export function GlitchMarquee() {
         className="overflow-hidden border-2 border-foreground"
       >
         <div className="flex animate-marquee" style={{ width: "max-content" }}>
-          {[...TECHS, ...TECHS].map((name, i) => (
+          {[...techs, ...techs].map((name, i) => (
             <LogoBlock
               key={`${name}-${i}`}
               name={name}
-              glitch={glitchIndices.includes(i % TECHS.length)}
+              glitch={glitchIndices.includes(i % techs.length)}
             />
           ))}
         </div>
